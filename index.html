@@ -5,201 +5,93 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>RushFlix — всё для разработчика</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #141414; color: #fff; overflow-x: hidden; }
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #141414; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #141414; color: #fff; overflow-x: hidden; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #141414; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
-  /* ─── HEADER ─── */
-  .header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 60px; height: 68px;
-    background: linear-gradient(180deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,0) 100%);
-    transition: background .3s;
-  }
-  .header.scrolled { background: #141414; }
-  .header-left { display: flex; align-items: center; gap: 40px; }
-  .logo { font-size: 28px; font-weight: 900; color: #e50914; letter-spacing: -1px; text-transform: uppercase; }
-  .logo span { color: #fff; }
-  .nav { display: flex; gap: 20px; }
-  .nav a { color: #e5e5e5; text-decoration: none; font-size: 14px; transition: color .2s; }
-  .nav a:hover, .nav a.active { color: #fff; font-weight: 600; }
-  .header-right { display: flex; align-items: center; gap: 20px; color: #fff; font-size: 20px; cursor: pointer; }
-  .avatar { width: 32px; height: 32px; border-radius: 4px; background: linear-gradient(135deg,#e50914,#ff6b6b); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+/* HEADER */
+.header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 60px; height: 68px; background: linear-gradient(180deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,0) 100%); transition: background .3s; }
+.header.scrolled { background: #141414; }
+.header-left { display: flex; align-items: center; gap: 40px; }
+.logo { font-size: 28px; font-weight: 900; color: #e50914; letter-spacing: -1px; text-transform: uppercase; }
+.logo span { color: #fff; }
+.nav { display: flex; gap: 20px; }
+.nav a { color: #e5e5e5; text-decoration: none; font-size: 14px; transition: color .2s; }
+.nav a:hover, .nav a.active { color: #fff; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 20px; color: #fff; font-size: 20px; cursor: pointer; }
+.avatar { width: 32px; height: 32px; border-radius: 4px; background: linear-gradient(135deg,#e50914,#ff6b6b); display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
-  /* ─── HERO ─── */
-  .hero {
-    position: relative; height: 100vh; min-height: 600px;
-    display: flex; align-items: flex-end; padding: 0 60px 120px;
-    background: linear-gradient(135deg, #1a0a0a 0%, #0d0d0d 40%, #1a1a2e 100%);
-    overflow: hidden;
-  }
-  .hero::before {
-    content: ''; position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 50%, rgba(229,9,20,.3) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 50% at 80% 30%, rgba(229,9,20,.15) 0%, transparent 60%);
-  }
-  .hero::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-    height: 200px;
-    background: linear-gradient(0deg, #141414 0%, transparent 100%);
-  }
-  .hero-badge {
-    position: absolute; top: 100px; right: 60px;
-    background: rgba(229,9,20,.9); padding: 8px 18px; border-radius: 4px;
-    font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-  .hero-content { position: relative; z-index: 2; max-width: 640px; }
-  .hero-content .label {
-    font-size: 14px; font-weight: 600; color: #e50914; text-transform: uppercase;
-    letter-spacing: 2px; margin-bottom: 8px;
-  }
-  .hero-content h1 {
-    font-size: 72px; font-weight: 900; line-height: 1;
-    margin-bottom: 12px; text-shadow: 0 4px 20px rgba(0,0,0,.6);
-  }
-  .hero-meta { display: flex; align-items: center; gap: 14px; font-size: 15px; color: #ccc; margin-bottom: 18px; }
-  .hero-meta .match { color: #46d369; font-weight: 700; }
-  .hero-meta .year { border: 1px solid #666; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
-  .hero-desc { font-size: 17px; line-height: 1.6; color: #bbb; margin-bottom: 24px; max-width: 580px; }
-  .hero-buttons { display: flex; gap: 12px; }
-  .btn { display: flex; align-items: center; gap: 8px; padding: 10px 28px; border: none; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform .15s, opacity .2s; }
-  .btn:hover { transform: scale(1.03); }
-  .btn-primary { background: #e50914; color: #fff; }
-  .btn-primary:hover { background: #c11119; }
-  .btn-secondary { background: rgba(255,255,255,.1); color: #fff; }
-  .btn-secondary:hover { background: rgba(255,255,255,.2); }
-  .hero-emoji {
-    position: absolute; right: 80px; bottom: 160px; z-index: 2;
-    font-size: 180px; opacity: .15; user-select: none;
-    animation: float 6s ease-in-out infinite;
-  }
-  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+/* HERO */
+.hero { position: relative; height: 100vh; min-height: 600px; display: flex; align-items: flex-end; padding: 0 60px 120px; background: linear-gradient(135deg, #1a0a0a 0%, #0d0d0d 40%, #1a1a2e 100%); overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(229,9,20,.3) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 80% 30%, rgba(229,9,20,.15) 0%, transparent 60%); }
+.hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 200px; background: linear-gradient(0deg, #141414 0%, transparent 100%); }
+.hero-badge { position: absolute; top: 100px; right: 60px; background: rgba(229,9,20,.9); padding: 8px 18px; border-radius: 4px; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.hero-content { position: relative; z-index: 2; max-width: 640px; }
+.hero-content .label { font-size: 14px; font-weight: 600; color: #e50914; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+.hero-content h1 { font-size: 72px; font-weight: 900; line-height: 1; margin-bottom: 12px; text-shadow: 0 4px 20px rgba(0,0,0,.6); }
+.hero-meta { display: flex; align-items: center; gap: 14px; font-size: 15px; color: #ccc; margin-bottom: 18px; }
+.hero-meta .match { color: #46d369; font-weight: 700; }
+.hero-meta .year { border: 1px solid #666; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+.hero-desc { font-size: 17px; line-height: 1.6; color: #bbb; margin-bottom: 24px; max-width: 580px; }
+.hero-buttons { display: flex; gap: 12px; }
+.btn { display: flex; align-items: center; gap: 8px; padding: 10px 28px; border: none; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform .15s, opacity .2s; }
+.btn:hover { transform: scale(1.03); }
+.btn-primary { background: #e50914; color: #fff; }
+.btn-primary:hover { background: #c11119; }
+.btn-secondary { background: rgba(255,255,255,.1); color: #fff; }
+.btn-secondary:hover { background: rgba(255,255,255,.2); }
+.hero-emoji { position: absolute; right: 80px; bottom: 160px; z-index: 2; font-size: 180px; opacity: .15; user-select: none; animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-  /* ─── ROWS ─── */
-  .rows { position: relative; z-index: 3; margin-top: -40px; padding-bottom: 60px; }
-  .row { padding: 20px 60px 10px; }
-  .row-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
-  .row-header h2 { font-size: 22px; font-weight: 700; }
-  .row-header .see-all { font-size: 13px; color: #888; cursor: pointer; transition: color .2s; }
-  .row-header .see-all:hover { color: #fff; }
-  .row-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 14px; scroll-behavior: smooth; }
-  .row-scroll::-webkit-scrollbar { height: 0; }
+/* ROWS */
+.rows { position: relative; z-index: 3; margin-top: -40px; padding-bottom: 60px; }
+.row { padding: 20px 60px 10px; }
+.row-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.row-header h2 { font-size: 22px; font-weight: 700; }
+.row-header .see-all { font-size: 13px; color: #888; cursor: pointer; transition: color .2s; }
+.row-header .see-all:hover { color: #fff; }
+.row-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0 14px; scroll-behavior: smooth; }
+.row-scroll::-webkit-scrollbar { height: 0; }
+.top10 .card { position: relative; min-width: 200px; }
+.top10 .card-number { position: absolute; left: -6px; bottom: 6px; z-index: 1; font-size: 100px; font-weight: 900; line-height: .8; color: #000; -webkit-text-stroke: 3px #444; text-shadow: none; letter-spacing: -6px; pointer-events: none; }
+.card { flex-shrink: 0; min-width: 220px; width: 220px; border-radius: 6px; overflow: hidden; cursor: pointer; transition: transform .3s ease, box-shadow .3s ease; position: relative; }
+.card:hover { transform: scale(1.08); z-index: 5; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+.card-top10 { min-width: 280px; }
+.card-top10:hover { transform: scale(1.06); }
+.card-poster { width: 100%; aspect-ratio: 2/3; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative; overflow: hidden; }
+.card-poster .card-emoji { position: relative; z-index: 1; filter: drop-shadow(0 2px 8px rgba(0,0,0,.3)); }
+.card-poster .card-glow { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(255,255,255,.1) 0%, transparent 70%); }
+.card-poster .card-year-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; backdrop-filter: blur(4px); }
+.card-info { padding: 8px 2px; }
+.card-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #999; }
+.card-meta .match { color: #46d369; font-weight: 600; }
+.card-desc { font-size: 12px; color: #777; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ─── TOP 10 ─── */
-  .top10 .card { position: relative; min-width: 200px; }
-  .top10 .card-number {
-    position: absolute; left: -6px; bottom: 6px; z-index: 1;
-    font-size: 100px; font-weight: 900; line-height: .8;
-    color: #000; -webkit-text-stroke: 3px #444;
-    text-shadow: none; letter-spacing: -6px;
-    pointer-events: none;
-  }
-
-  /* ─── CARD ─── */
-  .card {
-    flex-shrink: 0; min-width: 220px; width: 220px;
-    border-radius: 6px; overflow: hidden; cursor: pointer;
-    transition: transform .3s ease, box-shadow .3s ease;
-    position: relative;
-  }
-  .card:hover { transform: scale(1.08); z-index: 5; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
-  .card-top10 { min-width: 280px; }
-  .card-top10:hover { transform: scale(1.06); }
-  .card-poster {
-    width: 100%; aspect-ratio: 2/3; border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 48px; position: relative; overflow: hidden;
-  }
-  .card-poster .card-emoji { position: relative; z-index: 1; filter: drop-shadow(0 2px 8px rgba(0,0,0,.3)); }
-  .card-poster .card-glow {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,.1) 0%, transparent 70%);
-  }
-  .card-poster .card-year-badge {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: 3px;
-    font-size: 11px; font-weight: 600; backdrop-filter: blur(4px);
-  }
-  .card-info { padding: 8px 2px; }
-  .card-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #999; }
-  .card-meta .match { color: #46d369; font-weight: 600; }
-  .card-desc { font-size: 12px; color: #777; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  /* ─── MODAL ─── */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.8); backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center;
-    padding: 40px; animation: fadeIn .25s ease;
-  }
-  .modal-overlay.open { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .modal {
-    background: #1a1a1a; border-radius: 12px; max-width: 640px; width: 100%;
-    max-height: 90vh; overflow-y: auto; animation: slideUp .3s ease; position: relative;
-  }
-  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-close {
-    position: absolute; top: 12px; right: 12px; z-index: 10;
-    width: 36px; height: 36px; border-radius: 50%; border: none;
-    background: rgba(0,0,0,.6); color: #fff; font-size: 20px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background .2s;
-  }
-  .modal-close:hover { background: rgba(0,0,0,.9); }
-  .modal-poster {
-    width: 100%; aspect-ratio: 16/7;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 80px; position: relative; border-radius: 12px 12px 0 0;
-  }
-  .modal-poster .modal-glow {
-    position: absolute; inset: 0;
-    background: linear-gradient(0deg, #1a1a1a 0%, transparent 50%);
-    border-radius: 12px 12px 0 0;
-  }
-  .modal-body { padding: 20px 28px 28px; }
-  .modal-body h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
-  .modal-meta { display: flex; align-items: center; gap: 14px; font-size: 14px; color: #aaa; margin-bottom: 16px; }
-  .modal-meta .match { color: #46d369; font-weight: 700; }
-  .modal-meta .year { border: 1px solid #666; padding: 0 6px; border-radius: 3px; }
-  .modal-buttons { display: flex; gap: 10px; margin-bottom: 18px; }
-  .modal-desc { font-size: 15px; line-height: 1.7; color: #bbb; margin-bottom: 16px; }
-  .modal-details { font-size: 13px; color: #777; line-height: 1.8; }
-  .modal-details strong { color: #999; }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    .header { padding: 0 24px; }
-    .nav { display: none; }
-    .hero { padding: 0 24px 100px; }
-    .hero-content h1 { font-size: 42px; }
-    .hero-emoji { font-size: 100px; right: 24px; bottom: 120px; }
-    .hero-badge { top: 80px; right: 24px; font-size: 11px; }
-    .row { padding: 16px 24px 8px; }
-    .card { min-width: 160px; width: 160px; }
-    .top10 .card-number { font-size: 72px; }
-  }
-  @media (max-width: 500px) {
-    .hero-content h1 { font-size: 32px; }
-    .hero-desc { font-size: 14px; }
-    .card { min-width: 130px; width: 130px; }
-    .card-poster { font-size: 32px; }
-    .top10 .card-number { font-size: 56px; left: -4px; }
-    .modal { max-height: 85vh; }
-    .modal-body { padding: 16px 20px 20px; }
-  }
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.8); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 40px; }
+.modal-overlay.open { display: flex; }
+.modal { background: #1a1a1a; border-radius: 12px; max-width: 640px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+.modal-close { position: absolute; top: 12px; right: 12px; z-index: 10; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(0,0,0,.6); color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: rgba(0,0,0,.9); }
+.modal-poster { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; font-size: 80px; position: relative; border-radius: 12px 12px 0 0; }
+.modal-poster .modal-glow { position: absolute; inset: 0; background: linear-gradient(0deg, #1a1a1a 0%, transparent 50%); border-radius: 12px 12px 0 0; }
+.modal-body { padding: 20px 28px 28px; }
+.modal-body h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.modal-meta { display: flex; align-items: center; gap: 14px; font-size: 14px; color: #aaa; margin-bottom: 16px; }
+.modal-meta .match { color: #46d369; font-weight: 700; }
+.modal-meta .year { border: 1px solid #666; padding: 0 6px; border-radius: 3px; }
+.modal-buttons { display: flex; gap: 10px; margin-bottom: 18px; }
+.modal-desc { font-size: 15px; line-height: 1.7; color: #bbb; margin-bottom: 16px; }
+.modal-details { font-size: 13px; color: #777; line-height: 1.8; }
+.modal-details strong { color: #999; }
 </style>
 </head>
 <body>
 
-<!-- ─── HEADER ─── -->
 <header class="header" id="header">
   <div class="header-left">
     <div class="logo">RUSH<span>FLIX</span></div>
@@ -218,7 +110,6 @@
   </div>
 </header>
 
-<!-- ─── HERO ─── -->
 <section class="hero" id="hero">
   <div class="hero-badge">🔴 Эксклюзив RushFlix</div>
   <div class="hero-content">
@@ -236,24 +127,18 @@
       рефакторить 14 лет. Каждая строчка кода — ловушка.
     </p>
     <div class="hero-buttons">
-      <button class="btn btn-primary" onclick="playHero()">
-        ▶ Смотреть
-      </button>
-      <button class="btn btn-secondary" onclick="openModal(movies.flat().find(m => m.title==='Легаси'))">
-        ℹ Подробнее
-      </button>
+      <button class="btn btn-primary" id="hero-play">▶ Смотреть</button>
+      <button class="btn btn-secondary" id="hero-details">ℹ Подробнее</button>
     </div>
   </div>
   <div class="hero-emoji">👻</div>
 </section>
 
-<!-- ─── ROWS ─── -->
 <section class="rows" id="rows"></section>
 
-<!-- ─── MODAL ─── -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+<div class="modal-overlay" id="modal-overlay">
   <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+    <button class="modal-close" id="modal-close-btn">✕</button>
     <div class="modal-poster" id="modal-poster">
       <div class="modal-glow"></div>
     </div>
@@ -262,144 +147,84 @@
 </div>
 
 <script>
-const ROWS = [
-  {
-    title: '🔥 Популярное на RushFlix',
-    movies: [
-      { title: 'Пятничный деплой', year: 2026, match: 97, genre: 'Боевик', desc: 'Пятница, 17:45. Коммит без тестов. CI зелёный. Прод ждёт. Хватит ли сил нажать "Merge"?', emoji: '🚀', gradient: 'linear-gradient(135deg,#0f2027,#203a43,#2c5364)' },
-      { title: 'Прод упал', year: 2025, match: 99, genre: 'Триллер', desc: 'В 3 ночи прод лёг. Телефон разрывается. Ты — единственный, кто помнит пароль от сервера.', emoji: '🔥', gradient: 'linear-gradient(135deg,#4a0000,#8b0000,#e50914)' },
-      { title: 'Вайб-кодер', year: 2026, match: 88, genre: 'Комедия', desc: 'Он не знает синтаксис, но ChatGPT всё стерпит. Фронтенд за 10 минут? Легко. Прод — тоже.', emoji: '✨', gradient: 'linear-gradient(135deg,#42275a,#734b6d,#e8a87c)' },
-      { title: 'Спринт: Последняя миля', year: 2025, match: 95, genre: 'Экшн', desc: 'Дедлайн через 2 часа. Менеджер стоит над душой. Кофе — третья кружка. Скорость — единственный приоритет.', emoji: '🏃', gradient: 'linear-gradient(135deg,#1a0033,#330066,#6600cc)' },
-    ],
-  },
-  {
-    title: '🏆 Топ-10 сегодня',
-    isTop10: true,
-    movies: [
-      { title: 'Merge Conflict', year: 2026, match: 91, genre: 'Драма', desc: 'Две ветки. Один файл. Ноль компромиссов. Чей код выживет?', emoji: '💥', gradient: 'linear-gradient(135deg,#2d0a0a,#5c1010,#b71c1c)' },
-      { title: 'Тишина в тикете', year: 2025, match: 94, genre: 'Детектив', desc: 'Баг открыт 3 месяца. Никто не отвечает. Ты — тот, кто закроет его навсегда.', emoji: '🕵️', gradient: 'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)' },
-      { title: 'CI не проходит', year: 2026, match: 96, genre: 'Триллер', desc: 'Тесты падают. Логи молчат. Бины не совпадают. 27-й запуск — не последний.', emoji: '🤡', gradient: 'linear-gradient(135deg,#3e1f00,#6b3a00,#a85d00)' },
-      { title: 'Код-ревью из ада', year: 2025, match: 87, genre: 'Ужасы', desc: '50 комментов на 30 строк. "naming", "wtf", "———". Ни один апрув не пройден.', emoji: '👹', gradient: 'linear-gradient(135deg,#1f0000,#3d0000,#6b0000)' },
-      { title: 'Бэкенд во тьме', year: 2026, match: 93, genre: 'Мистика', desc: 'Эндпоинт отвечает 200, но возвращает null. Кто съел данные?', emoji: '🌑', gradient: 'linear-gradient(135deg,#0a0a0a,#1a1a2e,#2d2d44)' },
-      { title: 'Рефакторинг: Начало', year: 2025, match: 82, genre: 'Фантастика', desc: 'Он хотел переписать модуль. Он не знал, что модуль держит полпроды. Точка невозврата пройдена.', emoji: '🌀', gradient: 'linear-gradient(135deg,#0d1b2a,#1b2a4a,#2b4a7a)' },
-    ],
-  },
-  {
-    title: '▶ Продолжить просмотр',
-    continue: true,
-    movies: [
-      { title: 'Джуниор на продакшене', year: 2025, match: 78, genre: 'Комедия', desc: 'Ему дали права рута. Ему не сказали "аккуратно". sudo rm -rf — это начало.', emoji: '👶', gradient: 'linear-gradient(135deg,#2e4a2a,#4a7a42,#6aaa5a)' },
-      { title: 'npm install — хаос', year: 2026, match: 90, genre: 'Документалка', desc: '1500 зависимостей. 4 уязвимости. 2 — критические. Одна уже в проде.', emoji: '📦', gradient: 'linear-gradient(135deg,#1a2a3a,#2a4a5a,#3a6a7a)' },
-      { title: 'Совещание без конца', year: 2025, match: 73, genre: 'Драма', desc: 'Статус-митинг идёт 2 часа. Никто не знает, зачем он. Все боятся выйти.', emoji: '😵', gradient: 'linear-gradient(135deg,#2a2a1a,#4a4a2a,#6a6a3a)' },
-    ],
-  },
-  {
-    title: '✨ Новинки 2026',
-    movies: [
-      { title: 'Песок в продакшене', year: 2026, match: 86, genre: 'Экшн', desc: 'Песочница упала. Данные утекли в прод. Кто запушил боевую БД на удалёнку?', emoji: '🏖️', gradient: 'linear-gradient(135deg,#2a1a0a,#5a3a1a,#8a5a2a)' },
-      { title: 'Код без комментариев', year: 2026, match: 77, genre: 'Хоррор', desc: '2000 строк. Ни одного комментария. Переменные: a, b, c. Наследие уволившегося.', emoji: '📄', gradient: 'linear-gradient(135deg,#1a1a1a,#2a2a2a,#4a3a3a)' },
-      { title: 'Go to Production', year: 2026, match: 92, genre: 'Боевик', desc: 'Миграция БД на живую. Без отката. Ставки высоки как никогда.', emoji: '🗃️', gradient: 'linear-gradient(135deg,#0a2a1a,#1a4a2a,#2a6a3a)' },
-      { title: 'Микросервисный кошмар', year: 2026, match: 84, genre: 'Фантастика', desc: '150 микросервисов. Никто не знает, как они общаются. Спит — тот, кто написал оркестрацию.', emoji: '🕸️', gradient: 'linear-gradient(135deg,#2a0a2a,#4a1a4a,#6a2a6a)' },
-    ],
-  },
+var MOVIES = [
+  { title: 'Легаси', year: 2026, match: 98, genre: 'Хоррор', desc: 'Никто не знает, как это работает. Все боятся это трогать. Документальный хоррор о монолите, который никто не решался рефакторить 14 лет. Каждая строчка кода — ловушка.', emoji: '👻', gradient: 'linear-gradient(135deg,#1a0a0a,#0d0d0d,#1a1a2e)' },
+  { title: 'Пятничный деплой', year: 2026, match: 97, genre: 'Боевик', desc: 'Пятница, 17:45. Коммит без тестов. CI зелёный. Прод ждёт. Хватит ли сил нажать "Merge"?', emoji: '🚀', gradient: 'linear-gradient(135deg,#0f2027,#203a43,#2c5364)' },
+  { title: 'Прод упал', year: 2025, match: 99, genre: 'Триллер', desc: 'В 3 ночи прод лёг. Телефон разрывается. Ты — единственный, кто помнит пароль от сервера.', emoji: '🔥', gradient: 'linear-gradient(135deg,#4a0000,#8b0000,#e50914)' },
+  { title: 'Вайб-кодер', year: 2026, match: 88, genre: 'Комедия', desc: 'Он не знает синтаксис, но ChatGPT всё стерпит. Фронтенд за 10 минут? Легко. Прод — тоже.', emoji: '✨', gradient: 'linear-gradient(135deg,#42275a,#734b6d,#e8a87c)' },
+  { title: 'Спринт: Последняя миля', year: 2025, match: 95, genre: 'Экшн', desc: 'Дедлайн через 2 часа. Менеджер стоит над душой. Кофе — третья кружка. Скорость — единственный приоритет.', emoji: '🏃', gradient: 'linear-gradient(135deg,#1a0033,#330066,#6600cc)' },
+  { title: 'Merge Conflict', year: 2026, match: 91, genre: 'Драма', desc: 'Две ветки. Один файл. Ноль компромиссов. Чей код выживет?', emoji: '💥', gradient: 'linear-gradient(135deg,#2d0a0a,#5c1010,#b71c1c)' },
+  { title: 'Тишина в тикете', year: 2025, match: 94, genre: 'Детектив', desc: 'Баг открыт 3 месяца. Никто не отвечает. Ты — тот, кто закроет его навсегда.', emoji: '🕵️', gradient: 'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)' },
+  { title: 'CI не проходит', year: 2026, match: 96, genre: 'Триллер', desc: 'Тесты падают. Логи молчат. Бины не совпадают. 27-й запуск — не последний.', emoji: '🤡', gradient: 'linear-gradient(135deg,#3e1f00,#6b3a00,#a85d00)' },
+  { title: 'Код-ревью из ада', year: 2025, match: 87, genre: 'Ужасы', desc: '50 комментов на 30 строк. "naming", "wtf", "———". Ни один апрув не пройден.', emoji: '👹', gradient: 'linear-gradient(135deg,#1f0000,#3d0000,#6b0000)' },
+  { title: 'Бэкенд во тьме', year: 2026, match: 93, genre: 'Мистика', desc: 'Эндпоинт отвечает 200, но возвращает null. Кто съел данные?', emoji: '🌑', gradient: 'linear-gradient(135deg,#0a0a0a,#1a1a2e,#2d2d44)' },
+  { title: 'Рефакторинг: Начало', year: 2025, match: 82, genre: 'Фантастика', desc: 'Он хотел переписать модуль. Он не знал, что модуль держит полпроды. Точка невозврата пройдена.', emoji: '🌀', gradient: 'linear-gradient(135deg,#0d1b2a,#1b2a4a,#2b4a7a)' },
+  { title: 'Джуниор на продакшене', year: 2025, match: 78, genre: 'Комедия', desc: 'Ему дали права рута. Ему не сказали "аккуратно". sudo rm -rf — это начало.', emoji: '👶', gradient: 'linear-gradient(135deg,#2e4a2a,#4a7a42,#6aaa5a)' },
+  { title: 'npm install — хаос', year: 2026, match: 90, genre: 'Документалка', desc: '1500 зависимостей. 4 уязвимости. 2 — критические. Одна уже в проде.', emoji: '📦', gradient: 'linear-gradient(135deg,#1a2a3a,#2a4a5a,#3a6a7a)' },
+  { title: 'Совещание без конца', year: 2025, match: 73, genre: 'Драма', desc: 'Статус-митинг идёт 2 часа. Никто не знает, зачем он. Все боятся выйти.', emoji: '😵', gradient: 'linear-gradient(135deg,#2a2a1a,#4a4a2a,#6a6a3a)' },
+  { title: 'Песок в продакшене', year: 2026, match: 86, genre: 'Экшн', desc: 'Песочница упала. Данные утекли в прод. Кто запушил боевую БД на удалёнку?', emoji: '🏖️', gradient: 'linear-gradient(135deg,#2a1a0a,#5a3a1a,#8a5a2a)' },
+  { title: 'Код без комментариев', year: 2026, match: 77, genre: 'Хоррор', desc: '2000 строк. Ни одного комментария. Переменные: a, b, c. Наследие уволившегося.', emoji: '📄', gradient: 'linear-gradient(135deg,#1a1a1a,#2a2a2a,#4a3a3a)' },
+  { title: 'Go to Production', year: 2026, match: 92, genre: 'Боевик', desc: 'Миграция БД на живую. Без отката. Ставки высоки как никогда.', emoji: '🗃️', gradient: 'linear-gradient(135deg,#0a2a1a,#1a4a2a,#2a6a3a)' },
+  { title: 'Микросервисный кошмар', year: 2026, match: 84, genre: 'Фантастика', desc: '150 микросервисов. Никто не знает, как они общаются. Спит — тот, кто написал оркестрацию.', emoji: '🕸️', gradient: 'linear-gradient(135deg,#2a0a2a,#4a1a4a,#6a2a6a)' },
 ];
 
-const ALL_MOVIES = ROWS.flatMap(r => r.movies);
+var GROUPS = [
+  { title: '🔥 Популярное на RushFlix', items: [1,2,3,4] },
+  { title: '🏆 Топ-10 сегодня', top10: true, items: [5,6,7,8,9,10] },
+  { title: '▶ Продолжить просмотр', items: [11,12,13] },
+  { title: '✨ Новинки 2026', items: [14,15,16,17] },
+];
 
-function render() {
-  const container = document.getElementById('rows');
-  container.innerHTML = ROWS.map((row, ri) => {
-    const isTop10 = row.isTop10;
-    const cls = isTop10 ? 'row top10' : 'row';
-    const items = row.movies.map((m, mi) => {
-      const numberHtml = isTop10 ? `<div class="card-number">${mi + 1}</div>` : '';
-      const wideCls = isTop10 ? 'card card-top10' : 'card';
-      return `
-        <div class="${wideCls}" data-title="${m.title}" onclick="openModal(movies[${ri}][${mi}])">
-          <div class="card-poster" style="background:${m.gradient}">
-            <span class="card-emoji">${m.emoji}</span>
-            <div class="card-glow"></div>
-            <span class="card-year-badge">${m.year}</span>
-          </div>
-          <div class="card-info">
-            <h3>${m.title}</h3>
-            <div class="card-meta">
-              <span class="match">${m.match}% совпадения</span>
-              <span>${m.genre}</span>
-            </div>
-            <div class="card-desc">${m.desc}</div>
-          </div>
-          ${numberHtml}
-        </div>
-      `;
-    }).join('');
-
-    return `
-      <div class="${cls}">
-        <div class="row-header">
-          <h2>${row.title}</h2>
-          <span class="see-all">Все →</span>
-        </div>
-        <div class="row-scroll">${items}</div>
-      </div>
-    `;
-  }).join('');
-}
-
-/* expose movie data for modal lookup */
-const movies = ROWS.map(r => r.movies);
-
-function openModal(movie) {
-  if (!movie) return;
-  const overlay = document.getElementById('modal-overlay');
-  document.getElementById('modal-poster').innerHTML = `
-    <div style="position:absolute;inset:0;background:${movie.gradient}"></div>
-    <span style="position:relative;z-index:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4))">${movie.emoji}</span>
-    <div class="modal-glow"></div>
-  `;
-  document.getElementById('modal-body').innerHTML = `
-    <h2>${movie.title}</h2>
-    <div class="modal-meta">
-      <span class="match">${movie.match}% совпадения</span>
-      <span class="year">${movie.year}</span>
-      <span>${movie.genre}</span>
-    </div>
-    <div class="modal-buttons">
-      <button class="btn btn-primary" onclick="event.stopPropagation();closeModal()">▶ Смотреть</button>
-      <button class="btn btn-secondary" onclick="event.stopPropagation();closeModal()">+ Мой список</button>
-    </div>
-    <div class="modal-desc">${movie.desc}</div>
-    <div class="modal-details">
-      <strong>Режиссёр:</strong> Senior Developer<br>
-      <strong>В ролях:</strong> Кофеин, Депрессия, Прокрастинация, Дедлайн<br>
-      <strong>Слоган:</strong> «Работает — не трогай. Но это же надо починить…»
-    </div>
-  `;
-  overlay.classList.add('open');
+function openModal(m) {
+  if (!m) return;
+  document.getElementById('modal-poster').innerHTML = '<div style="position:absolute;inset:0;background:' + m.gradient + '"></div><span style="position:relative;z-index:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4))">' + m.emoji + '</span><div class="modal-glow"></div>';
+  document.getElementById('modal-body').innerHTML = '<h2>' + m.title + '</h2><div class="modal-meta"><span class="match">' + m.match + '% совпадения</span><span class="year">' + m.year + '</span><span>' + m.genre + '</span></div><div class="modal-buttons"><button class="btn btn-primary" onclick="closeModal()">▶ Смотреть</button><button class="btn btn-secondary" onclick="closeModal()">+ Мой список</button></div><div class="modal-desc">' + m.desc + '</div><div class="modal-details"><strong>Режиссёр:</strong> Senior Developer<br><strong>В ролях:</strong> Кофеин, Депрессия, Прокрастинация, Дедлайн<br><strong>Слоган:</strong> «Работает — не трогай. Но это же надо починить…»</div>';
+  document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closeModal(e) {
-  if (e && e.target !== document.getElementById('modal-overlay') && !e.target.closest('.modal-close')) return;
+function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 
-function playHero() {
-  alert('🍿 Запускаем «Легаси»…\n\nЗагрузка 14-летнего монолита…\n▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱ 47%\n\n⚠️ Внимание: во время просмотра возможны флешбеки из прода.');
+var html = '';
+for (var g = 0; g < GROUPS.length; g++) {
+  var grp = GROUPS[g];
+  var cards = '';
+  for (var c = 0; c < grp.items.length; c++) {
+    var idx = grp.items[c];
+    var m = MOVIES[idx];
+    cards += '<div class="' + (grp.top10 ? 'card card-top10' : 'card') + '" data-idx="' + idx + '"><div class="card-poster" style="background:' + m.gradient + '"><span class="card-emoji">' + m.emoji + '</span><div class="card-glow"></div><span class="card-year-badge">' + m.year + '</span></div><div class="card-info"><h3>' + m.title + '</h3><div class="card-meta"><span class="match">' + m.match + '% совпадения</span><span>' + m.genre + '</span></div><div class="card-desc">' + m.desc + '</div></div>' + (grp.top10 ? '<div class="card-number">' + (c + 1) + '</div>' : '') + '</div>';
+  }
+  html += '<div class="' + (grp.top10 ? 'row top10' : 'row') + '"><div class="row-header"><h2>' + grp.title + '</h2><span class="see-all">Все →</span></div><div class="row-scroll">' + cards + '</div></div>';
 }
+document.getElementById('rows').innerHTML = html;
 
-/* header scroll effect */
-window.addEventListener('scroll', () => {
-  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 40);
-});
+document.getElementById('hero-details').onclick = function() {
+  openModal(MOVIES[0]);
+};
 
-/* keyboard Escape */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-});
+document.getElementById('hero-play').onclick = function() {
+  alert('🍿 Запускаем «Легаси»…\n\nЗагрузка 14-летнего монолита…\n▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱ 47%\n\n⚠️ Внимание: во время просмотра возможны флешбеки из прода.');
+};
 
-render();
+document.getElementById('rows').onclick = function(e) {
+  var el = e.target;
+  while (el && !el.classList.contains('card')) { el = el.parentElement; }
+  if (el) openModal(MOVIES[parseInt(el.getAttribute('data-idx'), 10)]);
+};
+
+document.getElementById('modal-overlay').onclick = function(e) {
+  if (e.target === this) closeModal();
+};
+
+document.getElementById('modal-close-btn').onclick = closeModal;
+document.onkeydown = function(e) { if (e.key === 'Escape') closeModal(); };
+window.onscroll = function() {
+  var h = document.getElementById('header');
+  if (window.scrollY > 40) { h.classList.add('scrolled'); } else { h.classList.remove('scrolled'); }
+};
 </script>
 </body>
 </html>
