@@ -72,10 +72,10 @@ html { overflow-x: hidden; overflow-y: auto; }
 .card:hover { transform: scale(1.08); z-index: 5; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
 .card-top10 { min-width: 215px; width: 215px; }
 .card-top10:hover { transform: scale(1.06); }
-.card-poster { width: 100%; aspect-ratio: 2/3; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative; }
-.card-poster .card-emoji { position: relative; z-index: 1; filter: drop-shadow(0 2px 8px rgba(0,0,0,.3)); }
-.card-poster .card-glow { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(255,255,255,.1) 0%, transparent 70%); }
-.card-poster .card-year-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; backdrop-filter: blur(4px); }
+.card-poster { width: 100%; aspect-ratio: 2/3; border-radius: 4px; position: relative; overflow: hidden; }
+.card-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-poster .card-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.4) 60%, rgba(0,0,0,.7) 100%); pointer-events: none; }
+.card-poster .card-year-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; backdrop-filter: blur(4px); z-index: 1; }
 .card-badge { position: absolute; top: 8px; left: 8px; background: #e50914; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: .5px; z-index: 2; }
 .card-info { padding: 8px 2px; }
 .card-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -89,8 +89,9 @@ html { overflow-x: hidden; overflow-y: auto; }
 .modal { background: #1a1a1a; border-radius: 12px; max-width: 640px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
 .modal-close { position: absolute; top: 12px; right: 12px; z-index: 10; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(0,0,0,.6); color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .modal-close:hover { background: rgba(0,0,0,.9); }
-.modal-poster { width: 100%; aspect-ratio: 16/7; display: flex; align-items: center; justify-content: center; font-size: 80px; position: relative; border-radius: 12px 12px 0 0; }
-.modal-poster .modal-glow { position: absolute; inset: 0; background: linear-gradient(0deg, #1a1a1a 0%, transparent 50%); border-radius: 12px 12px 0 0; }
+.modal-poster { width: 100%; aspect-ratio: 16/7; position: relative; border-radius: 12px 12px 0 0; overflow: hidden; }
+.modal-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.modal-poster .modal-overlay-img { position: absolute; inset: 0; background: linear-gradient(0deg, #1a1a1a 0%, transparent 50%); border-radius: 12px 12px 0 0; pointer-events: none; }
 .modal-body { padding: 20px 28px 28px; }
 .modal-body h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
 .modal-meta { display: flex; align-items: center; gap: 14px; font-size: 14px; color: #aaa; margin-bottom: 16px; }
@@ -155,7 +156,7 @@ html { overflow-x: hidden; overflow-y: auto; }
   <div class="modal" id="modal">
     <button class="modal-close" id="modal-close-btn">✕</button>
     <div class="modal-poster" id="modal-poster">
-      <div class="modal-glow"></div>
+      <div class="modal-overlay-img"></div>
     </div>
     <div class="modal-body" id="modal-body"></div>
   </div>
@@ -163,30 +164,30 @@ html { overflow-x: hidden; overflow-y: auto; }
 
 <script>
 var MOVIES = [
-  { title: 'Легаси', year: 2026, match: 98, badge: 'ХИТ', genre: 'Хоррор', desc: 'Никто не знает, как это работает. Все боятся это трогать. Документальный хоррор о монолите, который никто не решался рефакторить 14 лет. Каждая строчка кода — ловушка.', emoji: '👻', gradient: 'linear-gradient(135deg,#1a0a0a,#0d0d0d,#1a1a2e)' },
-  { title: 'Пятничный деплой', year: 2026, match: 97, badge: 'ЭКСКЛЮЗИВ', genre: 'Боевик', desc: 'Пятница, 17:45. Коммит без тестов. CI зелёный. Прод ждёт. Хватит ли сил нажать "Merge"?', emoji: '🚀', gradient: 'linear-gradient(135deg,#0f2027,#203a43,#2c5364)' },
-  { title: 'Прод упал', year: 2025, match: 99, genre: 'Триллер', badge: 'НОВЫЙ СЕЗОН', desc: 'В 3 ночи прод лёг. Телефон разрывается. Ты — единственный, кто помнит пароль от сервера.', emoji: '🔥', gradient: 'linear-gradient(135deg,#4a0000,#8b0000,#e50914)' },
-  { title: 'Вайб-кодер', year: 2026, match: 88, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Он не знает синтаксис, но ChatGPT всё стерпит. Фронтенд за 10 минут? Легко. Прод — тоже.', emoji: '✨', gradient: 'linear-gradient(135deg,#42275a,#734b6d,#e8a87c)' },
-  { title: 'Спринт: Последняя миля', year: 2025, match: 95, genre: 'Экшн', desc: 'Дедлайн через 2 часа. Менеджер стоит над душой. Кофе — третья кружка. Скорость — единственный приоритет.', emoji: '🏃', gradient: 'linear-gradient(135deg,#1a0033,#330066,#6600cc)' },
-  { title: 'Merge Conflict', year: 2026, match: 91, badge: 'ТОП-5', genre: 'Драма', desc: 'Две ветки. Один файл. Ноль компромиссов. Чей код выживет?', emoji: '💥', gradient: 'linear-gradient(135deg,#2d0a0a,#5c1010,#b71c1c)' },
-  { title: 'Тишина в тикете', year: 2025, match: 94, badge: 'ТРЕЙЛЕР', genre: 'Детектив', desc: 'Баг открыт 3 месяца. Никто не отвечает. Ты — тот, кто закроет его навсегда.', emoji: '🕵️', gradient: 'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)' },
-  { title: 'CI не проходит', year: 2026, match: 96, badge: 'ХИТ', genre: 'Триллер', desc: 'Тесты падают. Логи молчат. Бины не совпадают. 27-й запуск — не последний.', emoji: '🤡', gradient: 'linear-gradient(135deg,#3e1f00,#6b3a00,#a85d00)' },
-  { title: 'Код-ревью из ада', year: 2025, match: 87, genre: 'Ужасы', desc: '50 комментов на 30 строк. "naming", "wtf", "———". Ни один апрув не пройден.', emoji: '👹', gradient: 'linear-gradient(135deg,#1f0000,#3d0000,#6b0000)' },
-  { title: 'Бэкенд во тьме', year: 2026, match: 93, badge: 'НОВИНКА', genre: 'Мистика', desc: 'Эндпоинт отвечает 200, но возвращает null. Кто съел данные?', emoji: '🌑', gradient: 'linear-gradient(135deg,#0a0a0a,#1a1a2e,#2d2d44)' },
-  { title: 'Рефакторинг: Начало', year: 2025, match: 82, badge: 'СКОРО', genre: 'Фантастика', desc: 'Он хотел переписать модуль. Он не знал, что модуль держит полпроды. Точка невозврата пройдена.', emoji: '🌀', gradient: 'linear-gradient(135deg,#0d1b2a,#1b2a4a,#2b4a7a)' },
-  { title: 'Джуниор на продакшене', year: 2025, match: 78, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Ему дали права рута. Ему не сказали "аккуратно". sudo rm -rf — это начало.', emoji: '👶', gradient: 'linear-gradient(135deg,#2e4a2a,#4a7a42,#6aaa5a)' },
-  { title: 'npm install — хаос', year: 2026, match: 90, genre: 'Документалка', desc: '1500 зависимостей. 4 уязвимости. 2 — критические. Одна уже в проде.', emoji: '📦', gradient: 'linear-gradient(135deg,#1a2a3a,#2a4a5a,#3a6a7a)' },
-  { title: 'Совещание без конца', year: 2025, match: 73, badge: 'ТОП-5', genre: 'Драма', desc: 'Статус-митинг идёт 2 часа. Никто не знает, зачем он. Все боятся выйти.', emoji: '😵', gradient: 'linear-gradient(135deg,#2a2a1a,#4a4a2a,#6a6a3a)' },
-  { title: 'Песок в продакшене', year: 2026, match: 86, badge: 'ТРЕЙЛЕР', genre: 'Экшн', desc: 'Песочница упала. Данные утекли в прод. Кто запушил боевую БД на удалёнку?', emoji: '🏖️', gradient: 'linear-gradient(135deg,#2a1a0a,#5a3a1a,#8a5a2a)' },
-  { title: 'Код без комментариев', year: 2026, match: 77, genre: 'Хоррор', desc: '2000 строк. Ни одного комментария. Переменные: a, b, c. Наследие уволившегося.', emoji: '📄', gradient: 'linear-gradient(135deg,#1a1a1a,#2a2a2a,#4a3a3a)' },
-  { title: 'Go to Production', year: 2026, match: 92, badge: 'ЭКСКЛЮЗИВ', genre: 'Боевик', desc: 'Миграция БД на живую. Без отката. Ставки высоки как никогда.', emoji: '🗃️', gradient: 'linear-gradient(135deg,#0a2a1a,#1a4a2a,#2a6a3a)' },
-  { title: 'Микросервисный кошмар', year: 2026, match: 84, badge: 'НОВИНКА', genre: 'Фантастика', desc: '150 микросервисов. Никто не знает, как они общаются. Спит — тот, кто написал оркестрацию.', emoji: '🕸️', gradient: 'linear-gradient(135deg,#2a0a2a,#4a1a4a,#6a2a6a)' },
-  { title: 'Еженедельный стендап', year: 2026, match: 81, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Понедельник, 10:00. 15 человек в зуме. "Что делал вчера?" — "В мерж реквесте апрув жду" × 14. И так каждую неделю.', emoji: '📞', gradient: 'linear-gradient(135deg,#1a2a1a,#2a4a2a,#3a6a3a)' },
-  { title: 'Ретроспектива', year: 2026, match: 85, badge: 'НОВИНКА', genre: 'Драма', desc: 'Они собрались обсудить спринт. Закончилось выяснением, кто не докрутил тесты. Снова.', emoji: '🔄', gradient: 'linear-gradient(135deg,#2a1a2a,#4a2a4a,#6a3a6a)' },
-  { title: 'Планирование спринта', year: 2026, match: 79, genre: 'Ужасы', desc: '8 часов. 40 сторипоинтов. Успели обсудить только первый. Но все проголосовали — "ок".', emoji: '📋', gradient: 'linear-gradient(135deg,#1a1a2a,#2a2a4a,#3a3a6a)' },
-  { title: 'Груминг на час', year: 2026, match: 83, badge: 'ТРЕЙЛЕР', genre: 'Триллер', desc: 'Задача на 15 минут. Обсуждали 60. Выяснили, что нужно уточнить требования. Перенесли на следующий груминг.', emoji: '⏳', gradient: 'linear-gradient(135deg,#2a2a1a,#4a4a1a,#6a6a2a)' },
-  { title: 'Демо без фич', year: 2026, match: 76, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Демо-ревью. За спринт ничего не замержили. Но слайды красивые. Аплодисменты.', emoji: '🎭', gradient: 'linear-gradient(135deg,#1a1a1a,#3a2a1a,#5a3a1a)' },
-  { title: 'Вечерний созвон', year: 2026, match: 88, badge: 'ЭКСКЛЮЗИВ', genre: 'Драма', desc: '18:30. "Быстрый колл на 10 минут". Через час обсуждают цвет кнопки на странице логина.', emoji: '🌙', gradient: 'linear-gradient(135deg,#0a0a1a,#1a1a3a,#2a2a5a)' },
+  { title: 'Легаси', year: 2026, match: 98, badge: 'ХИТ', genre: 'Хоррор', desc: 'Никто не знает, как это работает. Все боятся это трогать. Документальный хоррор о монолите, который никто не решался рефакторить 14 лет. Каждая строчка кода — ловушка.', poster: 'https://images.unsplash.com/photo-1698151256842-e658014ea99a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Пятничный деплой', year: 2026, match: 97, badge: 'ЭКСКЛЮЗИВ', genre: 'Боевик', desc: 'Пятница, 17:45. Коммит без тестов. CI зелёный. Прод ждёт. Хватит ли сил нажать "Merge"?', poster: 'https://images.unsplash.com/photo-1628126235206-5260b9ea6441?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Прод упал', year: 2025, match: 99, genre: 'Триллер', badge: 'НОВЫЙ СЕЗОН', desc: 'В 3 ночи прод лёг. Телефон разрывается. Ты — единственный, кто помнит пароль от сервера.', poster: 'https://images.unsplash.com/photo-1643252819983-7cfa20188914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Вайб-кодер', year: 2026, match: 88, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Он не знает синтаксис, но ChatGPT всё стерпит. Фронтенд за 10 минут? Легко. Прод — тоже.', poster: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Спринт: Последняя миля', year: 2025, match: 95, genre: 'Экшн', desc: 'Дедлайн через 2 часа. Менеджер стоит над душой. Кофе — третья кружка. Скорость — единственный приоритет.', poster: 'https://images.unsplash.com/photo-1727094141271-9bea5bc8c757?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Merge Conflict', year: 2026, match: 91, badge: 'ТОП-5', genre: 'Драма', desc: 'Две ветки. Один файл. Ноль компромиссов. Чей код выживет?', poster: 'https://images.unsplash.com/photo-1609790259520-cf7bce1bad5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Тишина в тикете', year: 2025, match: 94, badge: 'ТРЕЙЛЕР', genre: 'Детектив', desc: 'Баг открыт 3 месяца. Никто не отвечает. Ты — тот, кто закроет его навсегда.', poster: 'https://images.unsplash.com/photo-1780260991440-87059074d948?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'CI не проходит', year: 2026, match: 96, badge: 'ХИТ', genre: 'Триллер', desc: 'Тесты падают. Логи молчат. Бины не совпадают. 27-й запуск — не последний.', poster: 'https://images.unsplash.com/photo-1597066077705-a80f9863fb52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Код-ревью из ада', year: 2025, match: 87, genre: 'Ужасы', desc: '50 комментов на 30 строк. "naming", "wtf", "———". Ни один апрув не пройден.', poster: 'https://images.unsplash.com/photo-1618325508550-951512a1e82d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Бэкенд во тьме', year: 2026, match: 93, badge: 'НОВИНКА', genre: 'Мистика', desc: 'Эндпоинт отвечает 200, но возвращает null. Кто съел данные?', poster: 'https://images.unsplash.com/photo-1533113354171-490d836238e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Рефакторинг: Начало', year: 2025, match: 82, badge: 'СКОРО', genre: 'Фантастика', desc: 'Он хотел переписать модуль. Он не знал, что модуль держит полпроды. Точка невозврата пройдена.', poster: 'https://images.unsplash.com/photo-1572113394679-f98d243df693?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Джуниор на продакшене', year: 2025, match: 78, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Ему дали права рута. Ему не сказали "аккуратно". sudo rm -rf — это начало.', poster: 'https://images.unsplash.com/photo-1625133515823-b710c82cc4d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'npm install — хаос', year: 2026, match: 90, genre: 'Документалка', desc: '1500 зависимостей. 4 уязвимости. 2 — критические. Одна уже в проде.', poster: 'https://images.unsplash.com/photo-1644308925079-2cfda5debc53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Совещание без конца', year: 2025, match: 73, badge: 'ТОП-5', genre: 'Драма', desc: 'Статус-митинг идёт 2 часа. Никто не знает, зачем он. Все боятся выйти.', poster: 'https://images.unsplash.com/photo-1681949103006-70066fb25dfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Песок в продакшене', year: 2026, match: 86, badge: 'ТРЕЙЛЕР', genre: 'Экшн', desc: 'Песочница упала. Данные утекли в прод. Кто запушил боевую БД на удалёнку?', poster: 'https://images.unsplash.com/photo-1559767180-47d8f4919e5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Код без комментариев', year: 2026, match: 77, genre: 'Хоррор', desc: '2000 строк. Ни одного комментария. Переменные: a, b, c. Наследие уволившегося.', poster: 'https://images.unsplash.com/photo-1781750582692-0fa658af4c2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Go to Production', year: 2026, match: 92, badge: 'ЭКСКЛЮЗИВ', genre: 'Боевик', desc: 'Миграция БД на живую. Без отката. Ставки высоки как никогда.', poster: 'https://images.unsplash.com/photo-1639066648921-82d4500abf1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Микросервисный кошмар', year: 2026, match: 84, badge: 'НОВИНКА', genre: 'Фантастика', desc: '150 микросервисов. Никто не знает, как они общаются. Спит — тот, кто написал оркестрацию.', poster: 'https://images.unsplash.com/photo-1632407445732-dfca943a103e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Еженедельный стендап', year: 2026, match: 81, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Понедельник, 10:00. 15 человек в зуме. "Что делал вчера?" — "В мерж реквесте апрув жду" × 14. И так каждую неделю.', poster: 'https://images.unsplash.com/photo-1689848693914-7ba25d9f3334?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Ретроспектива', year: 2026, match: 85, badge: 'НОВИНКА', genre: 'Драма', desc: 'Они собрались обсудить спринт. Закончилось выяснением, кто не докрутил тесты. Снова.', poster: 'https://images.unsplash.com/photo-1583467875263-d50dec37a88c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Планирование спринта', year: 2026, match: 79, genre: 'Ужасы', desc: '8 часов. 40 сторипоинтов. Успели обсудить только первый. Но все проголосовали — "ок".', poster: 'https://images.unsplash.com/photo-1529651737248-dad5e287768e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Груминг на час', year: 2026, match: 83, badge: 'ТРЕЙЛЕР', genre: 'Триллер', desc: 'Задача на 15 минут. Обсуждали 60. Выяснили, что нужно уточнить требования. Перенесли на следующий груминг.', poster: 'https://images.unsplash.com/photo-1518281361980-b26bfd556770?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Демо без фич', year: 2026, match: 76, badge: 'ПРЕМЬЕРА', genre: 'Комедия', desc: 'Демо-ревью. За спринт ничего не замержили. Но слайды красивые. Аплодисменты.', poster: 'https://images.unsplash.com/photo-1686216607642-dfc241092ab0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
+  { title: 'Вечерний созвон', year: 2026, match: 88, badge: 'ЭКСКЛЮЗИВ', genre: 'Драма', desc: '18:30. "Быстрый колл на 10 минут". Через час обсуждают цвет кнопки на странице логина.', poster: 'https://images.unsplash.com/photo-1527842891421-42eec6e703ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400' },
 ];
 
 var GROUPS = [
@@ -199,7 +200,7 @@ var GROUPS = [
 
 function openModal(m) {
   if (!m) return;
-  document.getElementById('modal-poster').innerHTML = '<div style="position:absolute;inset:0;background:' + m.gradient + '"></div><span style="position:relative;z-index:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,.4))">' + m.emoji + '</span><div class="modal-glow"></div>';
+  document.getElementById('modal-poster').innerHTML = '<img src="' + m.poster + '" alt="' + m.title + '"><div class="modal-overlay-img"></div>';
   document.getElementById('modal-body').innerHTML = '<h2>' + m.title + '</h2><div class="modal-meta"><span class="match">' + m.match + '% совпадения</span><span class="year">' + m.year + '</span><span>' + m.genre + '</span></div><div class="modal-buttons"><button class="btn btn-primary" onclick="closeModal()">▶ Смотреть</button><button class="btn btn-secondary" onclick="closeModal()">+ Мой список</button></div><div class="modal-desc">' + m.desc + '</div><div class="modal-details"><strong>Режиссёр:</strong> Senior Developer<br><strong>В ролях:</strong> Кофеин, Депрессия, Прокрастинация, Дедлайн<br><strong>Слоган:</strong> «Работает — не трогай. Но это же надо починить…»</div>';
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -217,8 +218,8 @@ for (var g = 0; g < GROUPS.length; g++) {
   for (var c = 0; c < grp.items.length; c++) {
     var idx = grp.items[c];
     var m = MOVIES[idx];
-    var badgeHtml = m.badge ? '<div class=\"card-badge">' + m.badge + '</div>' : '';
-    cards += '<div class="' + (grp.top10 ? 'card card-top10' : 'card') + '" data-idx="' + idx + '"><div class="card-poster" style="background:' + m.gradient + '"><span class="card-emoji">' + m.emoji + '</span><div class="card-glow"></div><span class=\"card-year-badge\">' + m.year + '</span>' + badgeHtml + '</div><div class="card-info"><h3>' + m.title + '</h3><div class="card-meta"><span class="match">' + m.match + '% совпадения</span><span>' + m.genre + '</span></div><div class="card-desc">' + m.desc + '</div></div>' + (grp.top10 ? '<div class="card-number">' + (c + 1) + '</div>' : '') + '</div>';
+    var badgeHtml = m.badge ? '<div class="card-badge">' + m.badge + '</div>' : '';
+    cards += '<div class="' + (grp.top10 ? 'card card-top10' : 'card') + '" data-idx="' + idx + '"><div class="card-poster"><img src="' + m.poster + '" alt="' + m.title + '" loading="lazy"><div class="card-overlay"></div><span class="card-year-badge">' + m.year + '</span>' + badgeHtml + '</div><div class="card-info"><h3>' + m.title + '</h3><div class="card-meta"><span class="match">' + m.match + '% совпадения</span><span>' + m.genre + '</span></div><div class="card-desc">' + m.desc + '</div></div>' + (grp.top10 ? '<div class="card-number">' + (c + 1) + '</div>' : '') + '</div>';
   }
   var hasScroll = grp.items.length >= 10 ? ' always-show' : ' hide';
   html += '<div class="' + (grp.top10 ? 'row top10' : 'row') + '"><div class="row-header"><h2>' + grp.title + '</h2><span class="see-all">Все →</span></div><div class="row-scroll-wrap"><button class="row-btn row-btn-left' + hasScroll + '" data-scroll="' + g + '">‹</button><div class="row-scroll" data-row="' + g + '">' + cards + '</div><button class="row-btn row-btn-right' + hasScroll + '" data-scroll="' + g + '">›</button></div></div>';
