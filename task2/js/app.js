@@ -146,13 +146,30 @@ const App = {
         }
         this.batchRemaining--;
 
-        const speed = CONFIG.SPEEDS[this.currentSpeed] || 200;
         const delay = this.currentSpeed >= 5 ? 0 : 100;
         const isTurbo = this.currentSpeed >= 5;
 
         // Запускаем заход и проходим всех заключённых по одному
         Game.startRound();
 
+        if (isTurbo) {
+            // ТУРБО-РЕЖИМ ×50 — без анимации, синхронно проходим всех заключённых
+            while (Game.phase === 'running') {
+                const done = Game.step();
+                if (!done) {
+                    Game.animatePrisonerSteps(true);
+                    Game._cyclePrisonerResult = null;
+                    Game._randomPrisonerResult = null;
+                }
+            }
+            this._syncRender();
+            this._updateStats();
+            this._logBatchResult();
+            setTimeout(() => this._continueBatch(), delay);
+            return;
+        }
+
+        // Обычный режим — с покадровой анимацией
         const processPrisoners = () => {
             const done = Game.step();
             this._syncRender();
@@ -177,7 +194,7 @@ const App = {
                     // Сразу к следующему заключённому
                     processPrisoners();
                 } else {
-                    this._animTimer = setTimeout(animateP, speed);
+                    this._animTimer = setTimeout(animateP, CONFIG.SPEEDS[this.currentSpeed] || 200);
                 }
             };
 
@@ -243,6 +260,36 @@ const App = {
     _startAnimation() {
         const speed = CONFIG.SPEEDS[this.currentSpeed] || 200;
         const isTurbo = this.currentSpeed >= 5;
+
+        if (isTurbo) {
+            // ТУРБО-РЕЖИМ ×50 — синхронно, без setTimeout
+            const turboLoop = () => {
+                if (!this.isPlaying) return;
+
+                // Запускаем заход
+                Game.startRound();
+
+                // Проходим всех заключённых мгновенно
+                while (Game.phase === 'running') {
+                    const done = Game.step();
+                    if (!done) {
+                        Game.animatePrisonerSteps(true);
+                        Game._cyclePrisonerResult = null;
+                        Game._randomPrisonerResult = null;
+                    }
+                }
+
+                this._syncRender();
+                this._updateStats();
+                this._logBatchResult();
+
+                // Сразу следующий заход — без задержки
+                this.animationTimer = setTimeout(turboLoop, 0);
+            };
+
+            this.animationTimer = setTimeout(turboLoop, 0);
+            return;
+        }
 
         const tick = () => {
             if (!this.isPlaying) return;
